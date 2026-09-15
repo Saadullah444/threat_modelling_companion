@@ -144,7 +144,7 @@ Saadullah Farooq Abbasi, Muhammad Bilal, Xuefei Ding, Linxue Bai, Omid Pournik, 
 
 Department of Electronic, Electrical and Systems Engineering, University of Birmingham; School of Engineering, University of Edinburgh; WMG, University of Warwick.
 
-Corresponding author: Prof. Theodoros N. Arvanitis, T.Arvanitis@bham.ac.uk
+Corresponding author: Prof. Theodoros N. Arvanitis, T.Arvanitis@bham.ac.uk, 
 You can also contact: Dr. Saadullah Farooq Abbasi S.f.abbasi@bham.ac.uk 
 
 ## Acknowledgement
