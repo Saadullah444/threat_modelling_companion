@@ -1,43 +1,61 @@
+import json
+from typing import Any, Dict
+
+import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import subprocess
-from typing import Dict, Any
 
 from prompts import threat_json_prompts
 
 app = FastAPI(title="Threat-Model API")
 
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODEL = "llama3.1:8b"
+
+# Inference settings from Section 2.1 of the paper
+MODEL_OPTIONS = {
+    "temperature": 0.2,
+    "num_predict": 4000,
+    "num_ctx": 16384,  # large enough for the architecture JSON plus the baseline threat list
+}
+
+
 class ThreatModelRequest(BaseModel):
     threat_model: Dict[str, Any]
     detected_threats: Dict[str, Any]
 
-def call_local_model(prompt: str) -> str:
-    """
-    Run the Ollama llama-3.1-8b model locally and return its raw output.
-    """
-    proc = subprocess.Popen(
-        ["ollama", "run", "llama-3.1-8b", "--prompt", prompt],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    output, err = proc.communicate()
-    if proc.returncode != 0:
-        raise HTTPException(status_code=500, detail="Local LLM generation failed")
-    return output.decode().strip()
+
+def call_local_model(prompt: str, json_output: bool = False) -> str:
+    """Send a prompt to the locally running Ollama server and return the model's text output."""
+    payload = {
+        "model": MODEL,
+        "prompt": prompt,
+        "stream": False,
+        "options": MODEL_OPTIONS,
+    }
+    if json_output:
+        payload["format"] = "json"
+
+    try:
+        response = requests.post(OLLAMA_URL, json=payload, timeout=900)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Local LLM generation failed: {e}")
+
+    return response.json()["response"].strip()
+
 
 @app.post("/process-threat-model")
-async def process_threat_model(req: ThreatModelRequest):
+def process_threat_model(req: ThreatModelRequest):
     try:
-        # Fill in the system‐style prompt from your prompts.py
         prompt = threat_json_prompts.format(
-            detected_threats=req.detected_threats,
-            threat_model=req.threat_model
+            detected_threats=json.dumps(req.detected_threats, indent=2),
+            threat_model=json.dumps(req.threat_model, indent=2),
         )
-        # Call local LLM
         raw = call_local_model(prompt)
         return {"response": raw}
 
-    except HTTPException as he:
-        raise he
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal error: {e}")
