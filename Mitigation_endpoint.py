@@ -11,7 +11,7 @@ import pathlib
 import subprocess
 from typing import Dict, Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Body
 from fastapi.responses import JSONResponse
 
 app = FastAPI(title="Threat-Mitigation API")
@@ -28,9 +28,9 @@ SYSTEM_MSG = (
 )
 
 PER_THREAT_PROMPT = (
-    "Read the following threat object (JSON). "
-    "Return ONLY a short field called 'mitigation_strategy' "
-    "(2-4 sentences, reference ISO/OWASP/NIST, consider physical as well as software controls)."
+    'Read the following threat object (JSON). Return ONLY a JSON object of the form '
+    '{"mitigation_strategy": "<2-4 sentences referencing ISO/OWASP/NIST, '
+    'covering physical as well as software controls>"}'
 )
 
 # ─── Helpers ────────────────────────────────────────────────
@@ -65,7 +65,7 @@ def get_mitigation(threat_obj: Dict[str, Any]) -> str:
         f"{PER_THREAT_PROMPT}\n"
         f"{json.dumps(threat_obj, ensure_ascii=False)}"
     )
-    raw = call_local_model(prompt_block)
+    raw = call_local_model(prompt_block, json_output=True)
     try:
         parsed = json.loads(raw)
         return parsed["mitigation_strategy"]
@@ -77,7 +77,6 @@ def get_mitigation(threat_obj: Dict[str, Any]) -> str:
 
 @app.post("/mitigate")
 async def mitigate(request: Request):
-    payload = await request.json()
     threats = payload.get("threats")
     if not isinstance(threats, list):
         raise HTTPException(status_code=400, detail="`threats` must be a list")
