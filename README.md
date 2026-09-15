@@ -116,25 +116,25 @@ If you use this code, please cite the paper:
 
 ```bibtex
 @inproceedings{abbasi2026secure,
-  title     = {Secure and Enhanced Cyber-Threat Detection in IoMT Using Locally Deployed Large Language Models},
-  author    = {Abbasi, Saadullah Farooq and Bilal, Muhammad and Ding, Xuefei and Bai, Linxue and Pournik, Omid and Islam, Saif Ul and Epiphaniou, Gregory and Maple, Carsten and Arvanitis, Theodoros N.},
-  booktitle = {Studies in Health Technology and Informatics},
-  publisher = {IOS Press},
-  volume    = {336},
-  doi       = {10.3233/SHTI260323}
+  title={Secure and Enhanced Cyber-Threat Detection in IoMT Using Locally Deployed Large Language Models},
+  author={Abbasi, Saadullah Farooq and Bilal, Muhammad and Ding, Xuefei and Bai, Linxue and Pournik, Omid and Islam, Saif Ul and Epiphaniou, Gregory and Maple, Carsten and Arvanitis, Theodoros N},
+  booktitle={EFMI Medical Informatics Europe 2026: Opening the Personal Gate between Technology and Health Care},
+  pages={969--973},
+  year={2026},
+  organization={IOS Press}
 }
 ```
 
 The earlier vision language study that this work builds on:
 
 ```bibtex
-@inproceedings{abbasi2025preliminary,
-  title     = {Preliminary Exploration of Pre-Trained Vision-Language Models for Cyber-Threat Modelling in Internet of Medical Things (IoMT)},
-  author    = {Abbasi, Saadullah Farooq and Bilal, Muhammad and Mukherjee, Tanaya and Pournik, Omid and Moukafih, Nabil and Epiphaniou, Gregory and others},
-  booktitle = {35th Medical Informatics Europe Conference (MIE 2025)},
-  publisher = {IOS Press},
-  pages     = {1195--1199},
-  year      = {2025}
+@incollection{abbasi2025preliminary,
+  title={Preliminary exploration of pre-trained vision-language models for cyber-threat modelling in internet of medical things (iomt)},
+  author={Abbasi, Saadullah Farooq and Bilal, Muhammad and Mukherjee, Teesta and Pournik, Omid and Moukafih, Nabil and Epiphaniou, Gregory and Maple, Carsten and Arvanitis, Theodoros N},
+  booktitle={Intelligent Health Systems-From Technology to Data and Knowledge: Proceedings of MIE 2025},
+  pages={1195--1199},
+  year={2025},
+  publisher={SAGE Publications 1 Oliver's Yard, 55 City Road, London, EC1Y 1SP}
 }
 ```
 
