@@ -43,8 +43,8 @@ Hardware used in the paper: a 12th generation Intel Core i9 12900H at 2.50 GHz. 
 ## Installation
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/Saadullah444/threat_modelling_companion.git
+cd threat_modelling_companion
 
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
