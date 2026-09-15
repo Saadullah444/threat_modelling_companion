@@ -1,100 +1,61 @@
-"""
-FastAPI + Ollama (llama-3.1-8b)
-• one local LLM call per threat
-• incremental disk-flush after every threat
-"""
-
 import json
-import logging
-import datetime
-import pathlib
-import subprocess
-from typing import Dict, Any
+from typing import Any, Dict
 
-from fastapi import FastAPI, HTTPException, Body
-from fastapi.responses import JSONResponse
+import requests
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
-app = FastAPI(title="Threat-Mitigation API")
-log = logging.getLogger(__name__)
+from prompts import threat_json_prompts
 
-# ─── Constants ──────────────────────────────────────────────
+app = FastAPI(title="Threat-Model API")
 
-SAVE_DIR = pathlib.Path("mitigation_outputs")
-SAVE_DIR.mkdir(exist_ok=True)
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODEL = "llama3.1:8b"
 
-SYSTEM_MSG = (
-    "You are a cybersecurity expert specialising in threat modelling, "
-    "mitigation planning, and secure architecture for IoT and medical systems."
-)
+# Inference settings from Section 2.1 of the paper
+MODEL_OPTIONS = {
+    "temperature": 0.2,
+    "num_predict": 4000,
+    "num_ctx": 16384,  # large enough for the architecture JSON plus the baseline threat list
+}
 
-PER_THREAT_PROMPT = (
-    'Read the following threat object (JSON). Return ONLY a JSON object of the form '
-    '{"mitigation_strategy": "<2-4 sentences referencing ISO/OWASP/NIST, '
-    'covering physical as well as software controls>"}'
-)
 
-# ─── Helpers ────────────────────────────────────────────────
+class ThreatModelRequest(BaseModel):
+    threat_model: Dict[str, Any]
+    detected_threats: Dict[str, Any]
 
-def write_json(path: pathlib.Path, data: Any) -> None:
-    """Pretty-print JSON to disk (UTF-8, atomic overwrite)."""
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
-    tmp.replace(path)
 
-def call_local_model(prompt: str) -> str:
-    """
-    Shell out to Ollama’s llama-3.1-8b and return its raw output.
-    """
-    proc = subprocess.Popen(
-        ["ollama", "run", "llama-3.1-8b", "--prompt", prompt],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    output, err = proc.communicate()
-    if proc.returncode != 0:
-        log.error("Local LLM error: %s", err.decode().strip())
-        raise HTTPException(status_code=500, detail="Local LLM generation failed")
-    return output.decode().strip()
+def call_local_model(prompt: str, json_output: bool = False) -> str:
+    """Send a prompt to the locally running Ollama server and return the model's text output."""
+    payload = {
+        "model": MODEL,
+        "prompt": prompt,
+        "stream": False,
+        "options": MODEL_OPTIONS,
+    }
+    if json_output:
+        payload["format"] = "json"
 
-def get_mitigation(threat_obj: Dict[str, Any]) -> str:
-    """
-    Build a single-threat prompt, invoke the local LLM, parse JSON.
-    """
-    prompt_block = (
-        f"{SYSTEM_MSG}\n"
-        f"{PER_THREAT_PROMPT}\n"
-        f"{json.dumps(threat_obj, ensure_ascii=False)}"
-    )
-    raw = call_local_model(prompt_block, json_output=True)
     try:
-        parsed = json.loads(raw)
-        return parsed["mitigation_strategy"]
+        response = requests.post(OLLAMA_URL, json=payload, timeout=900)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Local LLM generation failed: {e}")
+
+    return response.json()["response"].strip()
+
+
+@app.post("/process-threat-model")
+def process_threat_model(req: ThreatModelRequest):
+    try:
+        prompt = threat_json_prompts.format(
+            detected_threats=json.dumps(req.detected_threats, indent=2),
+            threat_model=json.dumps(req.threat_model, indent=2),
+        )
+        raw = call_local_model(prompt)
+        return {"response": raw}
+
+    except HTTPException:
+        raise
     except Exception as e:
-        log.error("Bad JSON from local LLM: %s", e, exc_info=True)
-        raise HTTPException(status_code=500, detail="Invalid JSON from LLM")
-
-# ─── Endpoint ───────────────────────────────────────────────
-
-@app.post("/mitigate")
-async def mitigate(request: Request):
-    threats = payload.get("threats")
-    if not isinstance(threats, list):
-        raise HTTPException(status_code=400, detail="`threats` must be a list")
-
-    timestamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    outfile = SAVE_DIR / f"mitigations_{timestamp}.json"
-    out: list = []
-
-    for idx, th in enumerate(threats):
-        try:
-            th["mitigation_strategy"] = get_mitigation(th)
-        except HTTPException as he:
-            th["mitigation_strategy"] = f"⚠️ {he.detail}"
-        except Exception:
-            th["mitigation_strategy"] = "⚠️ Generation failed"
-        finally:
-            out.append(th)
-            write_json(outfile, out)
-            log.info("Processed threat %d/%d", idx + 1, len(threats))
-
-    return JSONResponse(content={"file": str(outfile), "data": out})
+        raise HTTPException(status_code=500, detail=f"Internal error: {e}")
