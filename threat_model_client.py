@@ -17,7 +17,7 @@ def process_threat_model_request(threat_model_path, detected_threats_path, threa
         "detected_threats": detected_threats,
     }
 
-    response = requests.post(threat_model_endpoint, json=payload, timeout=300)
+    response = requests.post(threat_model_endpoint, json=payload, timeout=3000)
 
     if response.status_code == 200:
         print("Threat Model API Response:")
