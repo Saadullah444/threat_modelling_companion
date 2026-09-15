@@ -38,7 +38,7 @@ Formally, the architecture is represented as a set of components and data flows,
 * [Ollama](https://ollama.com) installed and running locally, with the Llama 3.1 8B weights pulled
 * Python packages: `fastapi`, `uvicorn`, `pydantic`, `requests`
 
-Hardware used in the paper: a 12th generation Intel Core i7 12900H at 2.50 GHz. A GPU is not required for the 8B model but shortens each run considerably.
+Hardware used in the paper: a 12th generation Intel Core i9 12900H at 2.50 GHz. A GPU is not required for the 8B model but shortens each run considerably.
 
 ## Installation
 
