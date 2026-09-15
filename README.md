@@ -1,6 +1,6 @@
 # Secure and Enhanced Cyber-Threat Detection in IoMT Using Locally Deployed Large Language Models
 
-Reference implementation for the paper *Secure and Enhanced Cyber-Threat Detection in IoMT Using Locally Deployed Large Language Models* (Abbasi et al., IOS Press, Studies in Health Technology and Informatics, doi: [10.3233/SHTI260323](https://doi.org/10.3233/SHTI260323)).
+Implementation for the paper *Secure and Enhanced Cyber-Threat Detection in IoMT Using Locally Deployed Large Language Models* (Abbasi et al., IOS Press, Studies in Health Technology and Informatics, doi: [10.3233/SHTI260323](https://doi.org/10.3233/SHTI260323)).
 
 The repository contains a two stage pipeline that pairs the [Spyderisk System Modeller](https://github.com/Spyderisk/system-modeller) with a locally deployed Llama 3.1 (8B) model served through [Ollama](https://ollama.com). Stage one asks the local model to propose mitigation strategies for threats that Spyderisk has already found. Stage two asks it to reason semantically over the raw architectural JSON and surface additional threats that the baseline tool missed. Because inference runs on the local machine, no patient identifiable information or architectural detail ever leaves the host, which is the privacy property that cloud hosted assistants cannot offer.
 
