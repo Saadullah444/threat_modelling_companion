@@ -83,7 +83,7 @@ The protocol described in Section 2.1 of the paper:
 2. Maximum token limit capped at 4,000 so that complete IoMT JSON objects are processed.
 3. Five independent inference runs. A threat was included in Table 2 only if it appeared in at least four of the five runs.
 
-The temperature and token cap are not currently set in `call_local_model`. To reproduce the paper exactly, pass them through Ollama, either with an options payload against the Ollama HTTP API at `http://localhost:11434/api/generate` or through a Modelfile that sets `PARAMETER temperature 0.2` and `PARAMETER num_predict 4000`.
+To reproduce the paper exactly, pass them through Ollama, either with an options payload against the Ollama HTTP API at `http://localhost:11434/api/generate` or through a Modelfile that sets `PARAMETER temperature 0.2` and `PARAMETER num_predict 4000`.
 
 
 ## Disclaimer
