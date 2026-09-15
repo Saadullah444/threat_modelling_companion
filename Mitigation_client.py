@@ -13,7 +13,7 @@ def send_mitigation_request(input_path, api_url="http://127.0.0.1:8000/mitigate"
         api_url,
         data=payload,
         headers={"Content-Type": "application/json"},
-        timeout=300,
+        timeout=3600,
     )
     response.raise_for_status()
 
