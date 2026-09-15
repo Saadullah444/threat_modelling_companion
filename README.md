@@ -145,11 +145,8 @@ Saadullah Farooq Abbasi, Muhammad Bilal, Xuefei Ding, Linxue Bai, Omid Pournik, 
 Department of Electronic, Electrical and Systems Engineering, University of Birmingham; School of Engineering, University of Edinburgh; WMG, University of Warwick.
 
 Corresponding author: Prof. Theodoros N. Arvanitis, T.Arvanitis@bham.ac.uk
+You can also contact: Dr. Saadullah Farooq Abbasi S.f.abbasi@bham.ac.uk 
 
 ## Acknowledgement
 
 This work is partially funded by Advanced Security-for-safety Assurance for Medical Device IoT (MedSecurance), Grant Agreement number 101095448, and Innovative Applications of Assessment and Assurance of Data and Synthetic Data for Regulatory Decision Support (InSafeDare), Grant Agreement number 101095661.
-
-## License
-
-No licence file is included yet. MIT is the usual choice for a research prototype of this kind, and it sits comfortably alongside the Apache 2.0 licensed Spyderisk outputs. Note that redistribution of Llama 3.1 weights or derivatives is governed separately by the Llama 3.1 Community License, so keep weights out of the repository.
