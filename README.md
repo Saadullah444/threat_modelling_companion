@@ -26,10 +26,10 @@ Formally, the architecture is represented as a set of components and data flows,
 | --- | --- |
 | `threat_model.json` | IoMT architecture for the remote patient monitoring use case. Nine classes (Patient, Patients_Phone, Sensor_App, Sensor, Public, Patients_Work, Patients_House, Patients_Wifi, Patients_Router) and their relationships, exported from the modelling tool. |
 | `get_threats_OUTPUT.json` | Baseline threat set exported from Spyderisk. 41 threat objects, each with a description, the asset it threatens, a likelihood label and a risk level label. |
-| `prompts.py` | Prompt template for enhanced threat detection. Instructs the model to analyse every component and data flow against ISO, OWASP and NIST guidance, and to return only threats absent from the baseline list. |
-| `threat_model_endpoint.py` | FastAPI service exposing `POST /process-threat-model`. Formats the prompt and shells out to the local model. |
+| `prompts.py` | Instructs the model to analyse every component and data flow against ISO, OWASP and NIST guidance, and to return only threats absent from the baseline list. |
+| `threat_model_endpoint.py` | Formats the prompt and shells out to the local model. |
 | `threat_model_client.py` | Client that posts the architecture plus the baseline threats to the service above. |
-| `Mitigation_endpoint.py` | FastAPI service exposing `POST /mitigate`. Issues one local model call per threat, appends a `mitigation_strategy` field, and flushes the growing result to disk after every threat so a long run can be interrupted safely. |
+| `Mitigation_endpoint.py` | Issues one local model call per threat, appends a `mitigation_strategy` field, and flushes the growing result to disk after every threat so a long run can be interrupted safely. |
 | `Mitigation_client.py` | Client that posts the Spyderisk threat file to the mitigation service. |
 
 ## Requirements
